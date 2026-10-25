@@ -35,8 +35,9 @@ connection node_2;
 # Confirm the donor's rsync SST script flushed the filesystems
 # holding the Aria and InnoDB per-table directories, not only the
 # data directory itself.
-FOUND 1 /Synced filesystem: MYSQLTEST_VARDIR/tmp/MDEV-40727_aria_data/ in mysqld.1.err
-FOUND 1 /Synced filesystem: MYSQLTEST_VARDIR/tmp/MDEV-40727_aria_index/ in mysqld.1.err
-FOUND 1 /Synced filesystem: MYSQLTEST_VARDIR/tmp/MDEV-40727_innodb_data/test/ in mysqld.1.err
+FOUND 1 /Synced filesystem: \S*/tmp/MDEV-40727_aria_data/ in mysqld.1.err
+FOUND 1 /Synced filesystem: \S*/tmp/MDEV-40727_aria_index/ in mysqld.1.err
+FOUND 1 /Synced filesystem: \S*/tmp/MDEV-40727_innodb_data/test/ in mysqld.1.err
+CALL mtr.add_suppression("InnoDB: File .* was not found");
 connection node_1;
 DROP TABLE t_aria, t_innodb;

@@ -2,6 +2,8 @@
 --source include/galera_cluster.inc
 --source include/have_innodb.inc
 --source include/have_aria.inc
+# Elsewhere the rsync SST script does a plain sync and logs nothing
+--source include/linux.inc
 
 #
 # MDEV-40727 rsync SST donor stalls in a whole-host sync()
@@ -121,18 +123,22 @@ while ($ctr <= $n_tables_node1)
 --echo # holding the Aria and InnoDB per-table directories, not only the
 --echo # data directory itself.
 
+# The script logs physical paths, and the vardir may be a symlink
+# (e.g. to /dev/shm), so match only the part below the vardir.
 --let SEARCH_FILE = $MYSQLTEST_VARDIR/log/mysqld.1.err
---let SEARCH_PATTERN = Synced filesystem: $aria_data_dir
---replace_result $MYSQLTEST_VARDIR MYSQLTEST_VARDIR
+--let SEARCH_PATTERN = Synced filesystem: \S*/tmp/MDEV-40727_aria_data
 --source include/search_pattern_in_file.inc
 
---let SEARCH_PATTERN = Synced filesystem: $aria_index_dir
---replace_result $MYSQLTEST_VARDIR MYSQLTEST_VARDIR
+--let SEARCH_PATTERN = Synced filesystem: \S*/tmp/MDEV-40727_aria_index
 --source include/search_pattern_in_file.inc
 
---let SEARCH_PATTERN = Synced filesystem: $innodb_data_dir/test
---replace_result $MYSQLTEST_VARDIR MYSQLTEST_VARDIR
+--let SEARCH_PATTERN = Synced filesystem: \S*/tmp/MDEV-40727_innodb_data/test
 --source include/search_pattern_in_file.inc
+
+# Both nodes run on one host, so node_2's copy of t_innodb points to the
+# same external file, which node_1 has removed by the time node_2 applies
+# the replicated DROP.
+CALL mtr.add_suppression("InnoDB: File .* was not found");
 
 --connection node_1
 DROP TABLE t_aria, t_innodb;
