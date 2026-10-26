@@ -53,6 +53,8 @@ static void cache_friendly(int fd) noexcept
 # else
 static inline void cache_friendly(int) noexcept {}
 # endif
+#else
+static inline void cache_friendly(int) noexcept {}
 #endif
 
 /** Associate a transaction with the current session
