@@ -1,5 +1,5 @@
 /* Copyright (c) 2007, 2013, Oracle and/or its affiliates.
-   Copyright (c) 2008, 2022, MariaDB Corporation.
+   Copyright (c) 2008, 2026, MariaDB plc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -442,7 +442,17 @@ unpack_row(rpl_group_info *rgi,
       DBUG_ASSERT(null_mask & 0xFF); // One of the 8 LSB should be set
 
       if (!((null_bits & null_mask) && tabledef->maybe_null(i))) {
-        uint32 len= tabledef->calc_field_size(i, (uchar *) pack_ptr);
+        uint32 len= tabledef->calc_field_size(i, (uchar *) pack_ptr,
+                                              (size_t) (row_end - pack_ptr));
+        if (pack_ptr + len > row_end)
+        {
+          rgi->rli->report(ERROR_LEVEL, ER_SLAVE_CORRUPT_EVENT,
+                           rgi->gtid_info(),
+                           "Corrupt field data while skipping column %u of "
+                           "table '%s.%s'", i, table->s->db.str,
+                           table->s->table_name.str);
+          DBUG_RETURN(HA_ERR_CORRUPT_EVENT);
+        }
         DBUG_DUMP("field_data", pack_ptr, len);
         pack_ptr+= len;
       }
