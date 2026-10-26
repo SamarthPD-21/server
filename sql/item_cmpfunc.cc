@@ -237,7 +237,21 @@ bool Item_func_not_all::empty_underlying_subquery()
 
 void Item_func_not_all::print(String *str, enum_query_type query_type)
 {
-  if (show)
+  /*
+    The "<not>"/"<nop>" wrappers are internal and not valid SQL, so skip
+    them when parsable output is required. args[0] then prints the original
+    "x op ALL|ANY (subquery)", as Item_allany_subselect::print() re-inverts
+    the comparator. This holds only before the max/min rewrite. The
+    comparison is parenthesised because precedence() reports the wrapper
+    (DEFAULT_PRECEDENCE), so a parent would not add parentheses itself.
+  */
+  if (show && (query_type & QT_PARSABLE))
+  {
+    str->append('(');
+    args[0]->print(str, query_type);
+    str->append(')');
+  }
+  else if (show)
     Item_func::print(str, query_type);
   else
     args[0]->print(str, query_type);
