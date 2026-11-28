@@ -1644,9 +1644,10 @@ static Sys_var_mybool Sys_lower_case_file_system(
 
 static Sys_var_uint Sys_lower_case_table_names(
        "lower_case_table_names",
-       "If set to 1 table names are stored in lowercase on disk and table "
-       "names will be case-insensitive.  Should be set to 2 if you are using "
-       "a case insensitive file system",
+       "How table and database names are stored and compared. If set to 0, "
+       "names are stored as given and compared case-sensitively. If set to 1, "
+       "names are stored in lowercase and compared case-insensitively. If set "
+       "to 2, names are stored as given and compared in lowercase",
        READ_ONLY GLOBAL_VAR(lower_case_table_names),
        CMD_LINE(OPT_ARG, OPT_LOWER_CASE_TABLE_NAMES),
        VALID_RANGE(0, 2),

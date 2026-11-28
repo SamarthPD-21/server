@@ -579,9 +579,11 @@ The following specify which files/extra groups are read (specified before remain
  --low-priority-updates 
  INSERT/DELETE/UPDATE has lower priority than selects
  --lower-case-table-names[=#] 
- If set to 1 table names are stored in lowercase on disk
- and table names will be case-insensitive.  Should be set
- to 2 if you are using a case insensitive file system
+ How table and database names are stored and compared. If
+ set to 0, names are stored as given and compared
+ case-sensitively. If set to 1, names are stored in
+ lowercase and compared case-insensitively. If set to 2,
+ names are stored as given and compared in lowercase
  --master-info-file=name 
  The location and name of the file that remembers the
  master and where the I/O replication thread is in the

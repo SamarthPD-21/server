@@ -1825,7 +1825,7 @@ COMMAND_LINE_ARGUMENT	NULL
 VARIABLE_NAME	LOWER_CASE_TABLE_NAMES
 VARIABLE_SCOPE	GLOBAL
 VARIABLE_TYPE	INT UNSIGNED
-VARIABLE_COMMENT	If set to 1 table names are stored in lowercase on disk and table names will be case-insensitive.  Should be set to 2 if you are using a case insensitive file system
+VARIABLE_COMMENT	How table and database names are stored and compared. If set to 0, names are stored as given and compared case-sensitively. If set to 1, names are stored in lowercase and compared case-insensitively. If set to 2, names are stored as given and compared in lowercase
 NUMERIC_MIN_VALUE	0
 NUMERIC_MAX_VALUE	2
 NUMERIC_BLOCK_SIZE	1
